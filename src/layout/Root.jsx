@@ -1,6 +1,6 @@
 import React from "react";
-import Navvar from "../Componets/Navvar/Navvar.jsx";
-import Footer from "../Componets/Footer/Footer.jsx";
+import Navvar from "../Componets/Share/Navvar.jsx";
+import Footer from "../Componets/Share/Footer.jsx";
 import { Outlet } from "react-router";
 
 const Root = () => {
