@@ -1,11 +1,12 @@
 import React from "react";
 import Navbar from "../../Componets/Share/Navvar";
+import LoginForm from "../../Componets/Auth/Login/LoginForm";
 
 const LogIn = () => {
   return (
     <div>
       <Navbar />
-      <h1>This is LogIn</h1>
+      <LoginForm />
     </div>
   );
 };

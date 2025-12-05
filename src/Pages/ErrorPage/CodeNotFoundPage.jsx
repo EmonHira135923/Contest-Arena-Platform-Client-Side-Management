@@ -140,11 +140,11 @@ const CodeNotFoundPage = () => {
               </Link>
 
               <Link
-                to="/coding-challenges"
+                to="/all-contest"
                 className="group flex items-center gap-3 px-8 py-4 bg-gray-900 border-2 border-green-500/30 text-green-300 rounded-lg font-medium hover:border-green-500 hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-1"
               >
                 <Rocket size={20} />
-                <span>View Coding Challenges</span>
+                <span>All Contest</span>
                 <div className="ml-2 px-2 py-1 bg-green-900/50 rounded text-xs">
                   50+ Active
                 </div>
