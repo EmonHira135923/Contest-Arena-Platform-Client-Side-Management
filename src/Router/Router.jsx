@@ -5,18 +5,18 @@ import Home from "../Pages/Home/Home.jsx";
 import Register from "../Pages/Auth/Register.jsx";
 import LogIn from "../Pages/Auth/LogIn.jsx";
 import AllContests from "../Pages/AllContest/AllContests.jsx";
-import NotFoundPage from "../Pages/ErrorPage/NotFoundPage.jsx";
+import CodeNotFoundPage from "../Pages/ErrorPage/CodeNotFoundPage.jsx";
 
 const Router = createBrowserRouter([
   {
     path: "/",
     Component: Root,
-    errorElement: <NotFoundPage />,
+    errorElement: <CodeNotFoundPage />,
     children: [
       { index: true, Component: Home },
       {
         path: "/all-contest",
-        Component: AllContests,
+        element: <AllContests />,
       },
       {
         path: "/extra-section",
