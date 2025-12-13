@@ -16,6 +16,32 @@ const googleProvider = new GoogleAuthProvider();
 const Authcontext = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("creative-arena-theme");
+    if (savedTheme) {
+      return savedTheme;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  // Theme toggle function
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("creative-arena-theme", newTheme);
+  };
+
+  // Apply theme to document
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else {
+      root.classList.add("light");
+      root.classList.remove("dark");
+    }
+  }, [theme]);
 
   // create user
   const createUser = (email, password) => {
@@ -24,24 +50,22 @@ const Authcontext = ({ children }) => {
   };
 
   // email password login
-const loginUser = (email, password) => {
-  setLoading(true);
-  return signInWithEmailAndPassword(auth, email, password);
-};
+  const loginUser = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
-// logout
-const logoutUser = () => {
-  setLoading(true);
-  return signOut(auth);
-};
-
+  // logout
+  const logoutUser = () => {
+    setLoading(true);
+    return signOut(auth);
+  };
 
   // google login
   const googleLogin = () => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
-
 
   // update profile
   const updateUser = (name, photo) => {
@@ -51,7 +75,7 @@ const logoutUser = () => {
     });
   };
 
-  //  onAuthStateChanged
+  // onAuthStateChanged
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -69,12 +93,12 @@ const logoutUser = () => {
     loginUser,
     googleLogin,
     updateUser,
+    theme, 
+    toggleTheme,
   };
 
   return (
-    <div>
-      <Authprovider value={userinfo}>{children}</Authprovider>
-    </div>
+    <Authprovider value={userinfo}>{children}</Authprovider>
   );
 };
 

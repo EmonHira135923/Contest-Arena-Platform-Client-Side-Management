@@ -6,6 +6,7 @@ import {
   Instagram,
   Globe,
   Mail,
+  Sparkles,
   Heart,
 } from "lucide-react";
 import { NavLink } from "react-router";
@@ -14,7 +15,9 @@ const Footer = () => {
   const quickLinks = [
     { name: "Home", path: "/" },
     { name: "All Contest", path: "/all-contest" },
-    { name: "Extra Section", path: "/extra-section" },
+    { 
+      name: "Why Join Contest", path: "/whyjoincontest", icon: <Sparkles size={22} />
+    },
     { name: "About Us", path: "/about" },
     { name: "Contact", path: "/contact" },
     { name: "Privacy Policy", path: "/privacy" },
