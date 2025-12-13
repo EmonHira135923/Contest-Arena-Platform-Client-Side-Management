@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   User,
   Mail,
@@ -24,17 +24,87 @@ import {
   FileImage,
   CheckCircle,
 } from "lucide-react";
+import useHooks from "../../../Context/useHooks";
+import { toast } from "react-toastify";
 
 const RegForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
+  const navigate = useNavigate();
+
+  const {  createUser,
+  googleLogin,
+  updateUser,
+  loading,} = useHooks();
+
+  // loading
+    if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
+
+
+  // handle register
+  // handle register
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!name || !email || !password) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    
+    setIsRegistering(true);
+    
+    try {
+      // Create user
+      const userCredential = await createUser(email, password);
+      
+      // Update profile
+      if (userCredential?.user) {
+        await updateUser(name, photo || "https://via.placeholder.com/150");
+        
+        toast.success("Registration Successful 🎉");
+        
+        // Wait a moment for profile update and redirect to login
+        setTimeout(() => {
+          setIsRegistering(false);
+          navigate("/login");
+        }, 1500);
+      }
+    } catch (err) {
+      setIsRegistering(false);
+      console.error("Registration error:", err);
+      
+      // More specific error messages
+      if (err.code === "auth/email-already-in-use") {
+        toast.error("Email already in use. Please login instead.");
+      } else if (err.code === "auth/weak-password") {
+        toast.error("Password is too weak. Use at least 6 characters.");
+      } else if (err.code === "auth/invalid-email") {
+        toast.error("Invalid email address.");
+      } else {
+        toast.error(`Error: ${err.message}`);
+      }
     }
   };
+
+
+
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white overflow-auto p-4">
@@ -230,7 +300,7 @@ const RegForm = () => {
           </div>
 
           {/* Right Side - Registration Form */}
-          <div className="bg-gradient-to-br from-gray-900/60 via-gray-900/40 to-gray-950/30 border border-gray-800 rounded-2xl p-8 backdrop-blur-sm shadow-2xl shadow-black/50 lg:sticky lg:top-8 lg:self-start">
+          <div className="bg-gradient-to-br from-gray-900/60 via-gray-900/40 to-gray-950/30 border border-gray-800 rounded-2xl p-8 backdrop-blur-sm shadow-2xl shadow-black/50 lg:sticky lg:top-8 lg:self-start h-full">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500 mb-4 shadow-xl shadow-purple-500/30">
                 <User size={28} className="text-white" />
@@ -243,7 +313,7 @@ const RegForm = () => {
               </p>
             </div>
 
-            <form className="space-y-6">
+            <form onSubmit={handleRegister} className="space-y-6">
               {/* Name Field */}
               <div className="group">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2 group-hover:text-purple-300 transition-colors">
@@ -254,6 +324,7 @@ const RegForm = () => {
                   type="text"
                   className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all group-hover:border-purple-500/50"
                   placeholder="Enter your full name"
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -267,6 +338,7 @@ const RegForm = () => {
                   type="email"
                   className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all group-hover:border-purple-500/50"
                   placeholder="you@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -282,6 +354,7 @@ const RegForm = () => {
                     autoComplete="new-password"
                     className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all pr-12 group-hover:border-purple-500/50"
                     placeholder="Create a strong password"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -300,34 +373,20 @@ const RegForm = () => {
               <div className="group">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2 group-hover:text-purple-300 transition-colors">
                   <Camera size={16} className="text-purple-400" />
-                  Profile Photo (Optional)
+                  Photo URL
                 </label>
                 <div className="relative">
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    type="text"
+                    placeholder="Photo URL"
+                    onChange={(e) => setPhoto(e.target.value)}
                   />
                   <div className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border-2 border-dashed border-gray-700 rounded-xl text-white transition-all group-hover:border-purple-500/50 cursor-pointer">
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-start justify-start gap-2">
                       <FileImage size={18} className="text-gray-400" />
-                      <span className="text-sm">
-                        {selectedFile
-                          ? selectedFile.name
-                          : "Click to upload or drag and drop"}
-                      </span>
                     </div>
-                    {selectedFile && (
-                      <p className="text-xs text-emerald-400 text-center mt-2">
-                        ✓ {selectedFile.name} selected
-                      </p>
-                    )}
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1 ml-1">
-                  Add a photo to personalize your profile
-                </p>
               </div>
 
               {/* Terms and Conditions */}
@@ -365,11 +424,20 @@ const RegForm = () => {
                 type="submit"
                 className="w-full py-3.5 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 text-white font-semibold rounded-xl hover:from-purple-700 hover:via-pink-700 hover:to-rose-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/30 flex items-center justify-center gap-2 group relative overflow-hidden"
               >
-                <span className="relative z-10">Create Account</span>
-                <ArrowRight
-                  size={18}
-                  className="relative z-10 group-hover:translate-x-1 transition-transform"
-                />
+                {isRegistering ? (
+                  <>
+                    <span className="relative z-10">Creating Account...</span>
+                    <div className="relative z-10 w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  </>
+                ) : (
+                  <>
+                    <span className="relative z-10">Create Account</span>
+                    <ArrowRight
+                      size={18}
+                      className="relative z-10 group-hover:translate-x-1 transition-transform"
+                    />
+                  </>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
               </button>
 
@@ -400,6 +468,7 @@ const RegForm = () => {
                 <button
                   type="button"
                   className="py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl flex items-center justify-center gap-2 hover:border-gray-600 hover:bg-gray-800/50 transition-all duration-300 group"
+                 onClick={googleLogin}
                 >
                   <Globe
                     size={18}
@@ -424,26 +493,6 @@ const RegForm = () => {
               </div>
             </form>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-10 pt-6 border-t border-gray-800/30">
-          <p className="text-xs text-gray-500">
-            By creating an account, you agree to our{" "}
-            <Link
-              to="/terms"
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link
-              to="/privacy"
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-          </p>
         </div>
       </div>
     </div>

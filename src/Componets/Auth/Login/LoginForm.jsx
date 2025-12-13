@@ -22,50 +22,36 @@ import {
   Clock,
   TrendingUp,
 } from "lucide-react";
+import useHooks from "../../../Context/useHooks";
 
 const LoginForm = () => {
+ const { loginUser, googleLogin, loading } = useHooks();
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Login logic here
-    console.log("Login data:", formData);
-  };
+  // loading
+  if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center text-white">
+      Loading...
+    </div>
+  );
+}
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
 
-  const loginFeatures = [
-    {
-      icon: <Shield size={16} />,
-      text: "Secure login with encryption",
-      color: "text-emerald-400",
-    },
-    {
-      icon: <Sparkles size={16} />,
-      text: "Access to all contests",
-      color: "text-purple-400",
-    },
-    {
-      icon: <Key size={16} />,
-      text: "Manage your submissions",
-      color: "text-yellow-400",
-    },
-    {
-      icon: <UserCheck size={16} />,
-      text: "Track your progress",
-      color: "text-blue-400",
-    },
-  ];
+  // handle login
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    await loginUser(email, password);
+    alert("Login successful");
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
 
   const stats = [
     {
@@ -148,7 +134,7 @@ const LoginForm = () => {
           {/* Left Side - Brand & Features */}
           <div className="flex flex-col space-y-6">
             {/* Stats Cards */}
-            <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-gray-900/80 to-gray-950/80 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm h-full">
               <div className="grid grid-cols-2 gap-4 mb-6">
                 {stats.map((stat, idx) => (
                   <div
@@ -234,7 +220,7 @@ const LoginForm = () => {
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-6">
               {/* Email Field */}
               <div className="group">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2 group-hover:text-purple-300 transition-colors">
@@ -244,11 +230,10 @@ const LoginForm = () => {
                 <input
                   type="email"
                   name="email"
-                  value={formData.email}
-                  onChange={handleChange}
                   required
                   className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all group-hover:border-purple-500/50"
                   placeholder="you@example.com"
+                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
@@ -262,12 +247,12 @@ const LoginForm = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    value={formData.password}
-                    onChange={handleChange}
                     autoComplete="new-password"
                     required
                     className="w-full px-4 py-3 bg-gradient-to-r from-gray-900/50 to-gray-800/30 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all pr-12 group-hover:border-purple-500/50"
                     placeholder="••••••••"
+                    onChange={(e) => setPassword(e.target.value)}
+
                   />
                   <button
                     type="button"
@@ -356,7 +341,7 @@ const LoginForm = () => {
                     size={18}
                     className="text-gray-300 group-hover:text-white transition-colors"
                   />
-                  <span className="text-sm font-medium">Google</span>
+                  <span onClick={googleLogin} className="text-sm font-medium">Google</span>
                 </button>
               </div>
 
@@ -375,26 +360,6 @@ const LoginForm = () => {
               </div>
             </form>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-10 pt-6 border-t border-gray-800/30">
-          <p className="text-xs text-gray-500">
-            By signing in, you agree to our{" "}
-            <Link
-              to="/terms"
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link
-              to="/privacy"
-              className="text-gray-400 hover:text-purple-400 transition-colors"
-            >
-              Privacy Policy
-            </Link>
-          </p>
         </div>
       </div>
     </div>

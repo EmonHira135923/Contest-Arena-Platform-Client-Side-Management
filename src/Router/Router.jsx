@@ -19,7 +19,7 @@ const Router = createBrowserRouter([
         element: <AllContests />,
       },
       {
-        path: "/extra-section",
+        path: "/whyjoincontest",
       },
     ],
   },
