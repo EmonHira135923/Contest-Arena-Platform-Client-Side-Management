@@ -10,6 +10,10 @@ import Probleamsheet from "../Pages/Static/Probleamsheet.jsx";
 import WhyJoinContest from "../Pages/Static/WhyJoinContest.jsx";
 import Blog from "../Pages/Static/Blog.jsx";
 import PrivateRouter from "./PrivateRoute.jsx";
+import DashboardLayout from "../layout/DashboardLayout.jsx";
+import AdminDashboards from "../Pages/AllDashboard/AdminDashboards.jsx";
+import UserDasboards from "../Pages/AllDashboard/UserDasboards.jsx";
+import CreatorDasboards from "../Pages/AllDashboard/CreatorDasboards.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -50,6 +54,18 @@ const Router = createBrowserRouter([
     path: "/login",
     element: <LogIn />,
   },
+
+  {
+    path:"/admin",
+    Component:DashboardLayout,
+    errorElement:<CodeNotFoundPage/>,
+    children:[
+      {index:true,element:<AdminDashboards/>},
+      {path:"/admin/user-dashboard",element:<UserDasboards/>},
+      {path:"/admin/creative-dasboard",element:<CreatorDasboards/>}
+    ]
+  }
+
 ]);
 
 export default Router;

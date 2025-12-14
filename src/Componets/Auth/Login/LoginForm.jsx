@@ -126,7 +126,7 @@ const LoginForm = () => {
 
       // Check for stored redirect path
       const storedRedirect = sessionStorage.getItem('redirectAfterLogin');
-      let redirectTo = storedRedirect || '/dashboard';
+      let redirectTo = storedRedirect || '/admin';
       
       if (storedRedirect) {
         sessionStorage.removeItem('redirectAfterLogin');
