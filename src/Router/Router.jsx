@@ -14,6 +14,7 @@ import DashboardLayout from "../layout/DashboardLayout.jsx";
 import AdminDashboards from "../Pages/AllDashboard/AdminDashboards.jsx";
 import UserDasboards from "../Pages/AllDashboard/UserDasboards.jsx";
 import CreatorDasboards from "../Pages/AllDashboard/CreatorDasboards.jsx";
+import ContestDetail from "../Pages/AllContest/ContestDetail.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -53,6 +54,11 @@ const Router = createBrowserRouter([
   {
     path: "/login",
     element: <LogIn />,
+  },
+
+  {
+    path:"contest/details",
+    element:<ContestDetail/>
   },
 
   {

@@ -1,16 +1,16 @@
 // Home.jsx - Complete Home Page
+
 import Banner from "../../Componets/Header/Banner";
-import PopularContests from "../../Componets/PopularContests/PopularContests";
-import WinnerSection from "../../Componets/WinnerSection/WinnerSection";
-import ExtraSection from "../../Componets/ExtraSection/ExtraSection";
+import PopularContests from "../../Componets/Header/PopularContests";
+import WinnerSection from "../../Componets/Header/WinnerSection";
+
 
 const Home = () => {
   return (
     <div>
-      <Banner />
-      <PopularContests />
-      <WinnerSection />
-      <ExtraSection />
+      <Banner/>
+      <PopularContests/>
+      <WinnerSection/>
     </div>
   );
 };
